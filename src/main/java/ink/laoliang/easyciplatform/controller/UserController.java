@@ -2,6 +2,7 @@ package ink.laoliang.easyciplatform.controller;
 
 import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.request.LoginRequest;
+import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,10 @@ public class UserController {
     public User changePassword(@RequestHeader(value = "Authorization") String userToken,
                                @RequestParam String newPassword) {
         return userService.changePassword(userToken, newPassword);
+    }
+
+    @GetMapping(value = "/get_github_account")
+    public GithubAccountResponse getGithubAccount(@RequestHeader(value = "Authorization") String userToken){
+        return userService.getGithubAccount(userToken);
     }
 }

@@ -18,8 +18,6 @@ public class GithubRepo {
     @Column(nullable = false)
     private String name;
 
-    private String avatarUrl;
-
     @Column(nullable = false)
     private String cloneUrl;
 
@@ -51,14 +49,6 @@ public class GithubRepo {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
     }
 
     public String getCloneUrl() {

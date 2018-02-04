@@ -1,8 +1,8 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.User;
-import ink.laoliang.easyciplatform.domain.UserRepository;
+import ink.laoliang.easyciplatform.domain.*;
 import ink.laoliang.easyciplatform.domain.request.LoginRequest;
+import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.exception.IllegalParameterException;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
@@ -21,6 +21,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private LoginResponse loginResponse;
 
+    @Autowired
+    private User user;
+
+    @Autowired
+    private GithubAccountRepository githubAccountRepository;
+
+    @Autowired
+    private GithubRepoRepository githubRepoRepository;
+
+    @Autowired
+    private GithubAccountResponse githubAccountResponse;
+
+    @Autowired
+    private GithubAccount githubAccount;
+
     @Override
     public User register(User user) {
         // 检查用户的注册信息格式
@@ -35,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findOne(loginRequest.getEmail());
+        user = userRepository.findOne(loginRequest.getEmail());
 
         if (user == null) {
             throw new IllegalParameterException("【邮箱】账户不存在");
@@ -56,9 +71,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User changePassword(String userToken, String newPassword) {
-        User user = UserTokenByJwt.parserToken(userToken, userRepository);
+        user = UserTokenByJwt.parserToken(userToken, userRepository);
         user.setPassword(MD5EncodeUtil.encode(newPassword));
         return userRepository.save(user);
+    }
+
+    @Override
+    public GithubAccountResponse getGithubAccount(String userToken) {
+        user = UserTokenByJwt.parserToken(userToken, userRepository);
+        githubAccount = githubAccountRepository.findByAuthorizeTo(user.getEmail());
+        githubAccountResponse.setGithubAccount(githubAccount);
+        githubAccountResponse.setGithubRepos(githubRepoRepository.findAllByLogin(githubAccount.getLogin()));
+        return githubAccountResponse;
     }
 
     /**

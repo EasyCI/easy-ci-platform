@@ -90,7 +90,6 @@ public class GithubServiceImpl implements GithubService {
             githubAccount = githubAccountRepository.save(githubAccount);
             githubAccountResponse.setGithubAccount(githubAccount);
 
-
             RepositoryService repositoryService = new RepositoryService(gitHubClient);
 
             // 这里每次还需要先将指定Github用户下所有repos先删除掉
@@ -99,9 +98,10 @@ public class GithubServiceImpl implements GithubService {
             for (Repository repository : repositoryService.getRepositories()) {
                 GithubRepo githubRepo = new GithubRepo();
                 githubRepo.setId(repository.getId());
-                githubRepo.setLogin(repository.getOwner().getLogin());
+                String login = repository.getOwner().getLogin();
+                if(!login.equals(user.getLogin())) continue;
+                githubRepo.setLogin(login);
                 githubRepo.setName(repository.getName());
-                githubRepo.setAvatarUrl(repository.getOwner().getAvatarUrl());
                 githubRepo.setCloneUrl(repository.getCloneUrl());
                 githubRepo.setDefaultBranch(repository.getMasterBranch());
                 githubRepo = githubRepoRepository.save(githubRepo);
