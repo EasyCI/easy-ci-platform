@@ -1,9 +1,9 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.request.LoginRequest;
-import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.UserRepository;
+import ink.laoliang.easyciplatform.domain.request.LoginRequest;
+import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.exception.IllegalParameterException;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
@@ -52,6 +52,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User logout(String userToken) {
         return UserTokenByJwt.parserToken(userToken, userRepository);
+    }
+
+    @Override
+    public User changePassword(String userToken, String newPassword) {
+        User user = UserTokenByJwt.parserToken(userToken, userRepository);
+        user.setPassword(MD5EncodeUtil.encode(newPassword));
+        return userRepository.save(user);
     }
 
     /**

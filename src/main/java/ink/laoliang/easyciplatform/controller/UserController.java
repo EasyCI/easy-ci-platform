@@ -1,8 +1,8 @@
 package ink.laoliang.easyciplatform.controller;
 
+import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.request.LoginRequest;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
-import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,5 +27,11 @@ public class UserController {
     @PostMapping(value = "/logout")
     public User logout(@RequestHeader(value = "Authorization") String userToken) {
         return userService.logout(userToken);
+    }
+
+    @PostMapping(value = "/change_password")
+    public User changePassword(@RequestHeader(value = "Authorization") String userToken,
+                               @RequestParam String newPassword) {
+        return userService.changePassword(userToken, newPassword);
     }
 }

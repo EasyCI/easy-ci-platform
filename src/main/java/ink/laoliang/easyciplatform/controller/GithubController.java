@@ -28,7 +28,7 @@ public class GithubController {
 
     @PostMapping(value = "/update_account")
     public GithubAccountResponse updateAccount(@RequestHeader(value = "Authorization") String userToken,
-                                            @RequestHeader(value = "X-GitHub-Access-Token") String accessToken) {
+                                               @RequestHeader(value = "X-GitHub-Access-Token") String accessToken) {
         return githubService.updateAccount(userToken, accessToken);
     }
 }
