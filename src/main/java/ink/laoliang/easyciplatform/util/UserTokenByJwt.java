@@ -4,8 +4,8 @@ import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.UserRepository;
 import ink.laoliang.easyciplatform.exception.IllegalUserTokenException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 
@@ -18,7 +18,8 @@ public class UserTokenByJwt {
     private final static SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
     // 为 Token 签名的 Key
-    private final static Key SIGNING_KEY = MacProvider.generateKey();
+//    private final static Key SIGNING_KEY = MacProvider.generateKey(); // 此方式重启服务，签名就会改变
+    private final static Key SIGNING_KEY = new SecretKeySpec("MyKey".getBytes(), SIGNATURE_ALGORITHM.getJcaName());
 
     /**
      * 为用户创建一个 token

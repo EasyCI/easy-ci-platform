@@ -3,13 +3,13 @@ package ink.laoliang.easyciplatform.domain.response;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GitHubTokenResponse {
+public class GithubTokenResponse {
 
     private String status;
 
     private String accessToken;
 
-    public GitHubTokenResponse() {
+    public GithubTokenResponse() {
     }
 
     public String getStatus() {

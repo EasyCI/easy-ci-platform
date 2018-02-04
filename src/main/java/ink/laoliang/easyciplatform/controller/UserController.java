@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/logout")
-    public User logout(@RequestHeader String authorization) {
-        return userService.logout(authorization);
+    public User logout(@RequestHeader(value = "Authorization") String userToken) {
+        return userService.logout(userToken);
     }
 }

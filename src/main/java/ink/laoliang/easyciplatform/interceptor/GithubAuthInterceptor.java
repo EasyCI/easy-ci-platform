@@ -6,7 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class GitAuthInterceptor implements HandlerInterceptor {
+public class GithubAuthInterceptor implements HandlerInterceptor {
 
     /**
      * 在请求处理之前进行调用（Controller方法调用之前）
