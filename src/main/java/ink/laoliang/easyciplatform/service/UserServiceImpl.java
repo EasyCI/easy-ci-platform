@@ -1,7 +1,6 @@
 package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.*;
-import ink.laoliang.easyciplatform.domain.request.LoginRequest;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.exception.IllegalParameterException;
@@ -49,13 +48,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
-        user = userRepository.findOne(loginRequest.getEmail());
+    public LoginResponse login(String email, String password) {
+        user = userRepository.findOne(email);
 
         if (user == null) {
             throw new IllegalParameterException("【邮箱】账户不存在");
         }
-        if (!user.getPassword().equals(MD5EncodeUtil.encode(loginRequest.getPassword()))) {
+        if (!user.getPassword().equals(MD5EncodeUtil.encode(password))) {
             throw new IllegalParameterException("【密码】错误");
         }
 

@@ -1,7 +1,6 @@
 package ink.laoliang.easyciplatform.controller;
 
 import ink.laoliang.easyciplatform.domain.User;
-import ink.laoliang.easyciplatform.domain.request.LoginRequest;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.service.UserService;
@@ -21,8 +20,9 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return userService.login(loginRequest);
+    public LoginResponse login(@RequestParam String email,
+                               @RequestParam String password) {
+        return userService.login(email, password);
     }
 
     @PostMapping(value = "/logout")
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/get_github_account")
-    public GithubAccountResponse getGithubAccount(@RequestHeader(value = "Authorization") String userToken){
+    public GithubAccountResponse getGithubAccount(@RequestHeader(value = "Authorization") String userToken) {
         return userService.getGithubAccount(userToken);
     }
 }
