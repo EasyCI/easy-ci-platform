@@ -12,7 +12,7 @@ import java.util.Date;
 public class UserTokenByJwt {
 
     // Jwt 的 Token 有效时长（毫秒数）
-    private final static long VALID_TIME = 1000 * 60 * 60 * 24;
+    private final static long VALID_TIME = 1000 * 60 * 60 * 24 * 7; // 7 天
 
     // 为 Token 签名的 算法
     private final static SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;

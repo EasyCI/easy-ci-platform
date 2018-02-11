@@ -1,9 +1,10 @@
 package ink.laoliang.easyciplatform.domain;
 
-import org.eclipse.egit.github.core.Repository;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 @Entity
 @Component
