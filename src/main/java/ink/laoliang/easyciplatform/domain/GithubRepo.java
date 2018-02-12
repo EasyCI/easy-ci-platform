@@ -23,7 +23,7 @@ public class GithubRepo {
     private String cloneUrl;
 
     @Column(nullable = false)
-    private String defaultBranch;
+    private String[] branchs;
 
     public GithubRepo() {
     }
@@ -60,11 +60,11 @@ public class GithubRepo {
         this.cloneUrl = cloneUrl;
     }
 
-    public String getDefaultBranch() {
-        return defaultBranch;
+    public String[] getBranchs() {
+        return branchs;
     }
 
-    public void setDefaultBranch(String defaultBranch) {
-        this.defaultBranch = defaultBranch;
+    public void setBranchs(String[] branchs) {
+        this.branchs = branchs;
     }
 }

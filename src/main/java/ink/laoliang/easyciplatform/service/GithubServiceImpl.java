@@ -1,11 +1,16 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.*;
+import ink.laoliang.easyciplatform.domain.GithubAccount;
+import ink.laoliang.easyciplatform.domain.GithubRepo;
+import ink.laoliang.easyciplatform.domain.repository.GithubAccountRepository;
+import ink.laoliang.easyciplatform.domain.repository.GithubRepoRepository;
+import ink.laoliang.easyciplatform.domain.repository.UserRepository;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.GithubTokenResponse;
 import ink.laoliang.easyciplatform.exception.GithubAuthException;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
 import org.eclipse.egit.github.core.Repository;
+import org.eclipse.egit.github.core.RepositoryBranch;
 import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
@@ -99,11 +104,15 @@ public class GithubServiceImpl implements GithubService {
                 GithubRepo githubRepo = new GithubRepo();
                 githubRepo.setId(repository.getId());
                 String login = repository.getOwner().getLogin();
-                if(!login.equals(user.getLogin())) continue;
+                if (!login.equals(user.getLogin())) continue;
                 githubRepo.setLogin(login);
                 githubRepo.setName(repository.getName());
                 githubRepo.setCloneUrl(repository.getCloneUrl());
-                githubRepo.setDefaultBranch(repository.getMasterBranch());
+                List<String> branchs = new ArrayList<>();
+                for (RepositoryBranch repositoryBranch : repositoryService.getBranches(repository)) {
+                    branchs.add(repositoryBranch.getName());
+                }
+                githubRepo.setBranchs(branchs.toArray(new String[branchs.size()]));
                 githubRepo = githubRepoRepository.save(githubRepo);
                 githubRepos.add(githubRepo);
             }

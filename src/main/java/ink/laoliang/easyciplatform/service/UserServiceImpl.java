@@ -1,6 +1,10 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.*;
+import ink.laoliang.easyciplatform.domain.GithubAccount;
+import ink.laoliang.easyciplatform.domain.User;
+import ink.laoliang.easyciplatform.domain.repository.GithubAccountRepository;
+import ink.laoliang.easyciplatform.domain.repository.GithubRepoRepository;
+import ink.laoliang.easyciplatform.domain.repository.UserRepository;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.exception.IllegalParameterException;

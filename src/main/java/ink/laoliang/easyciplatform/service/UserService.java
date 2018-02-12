@@ -1,8 +1,8 @@
 package ink.laoliang.easyciplatform.service;
 
+import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
-import ink.laoliang.easyciplatform.domain.User;
 
 public interface UserService {
 

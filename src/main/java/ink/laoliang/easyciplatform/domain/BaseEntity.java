@@ -18,7 +18,7 @@ public abstract class BaseEntity {
     @LastModifiedDate
     protected Date updatedAt;
 
-    public BaseEntity(){
+    public BaseEntity() {
     }
 
     public Date getCreatedAt() {
