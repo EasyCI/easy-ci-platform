@@ -1,7 +1,7 @@
 package ink.laoliang.easyciplatform.util;
 
 import ink.laoliang.easyciplatform.domain.User;
-import ink.laoliang.easyciplatform.domain.repository.UserRepository;
+import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.exception.IllegalUserTokenException;
 import io.jsonwebtoken.*;
 

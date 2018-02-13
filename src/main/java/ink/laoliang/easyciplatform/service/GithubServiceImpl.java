@@ -2,9 +2,9 @@ package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.GithubAccount;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
-import ink.laoliang.easyciplatform.domain.repository.GithubAccountRepository;
-import ink.laoliang.easyciplatform.domain.repository.GithubRepoRepository;
-import ink.laoliang.easyciplatform.domain.repository.UserRepository;
+import ink.laoliang.easyciplatform.repository.GithubAccountRepository;
+import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
+import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.GithubTokenResponse;
 import ink.laoliang.easyciplatform.exception.GithubAuthException;
