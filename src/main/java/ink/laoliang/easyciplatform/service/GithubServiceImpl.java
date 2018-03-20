@@ -2,12 +2,13 @@ package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.GithubAccount;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
-import ink.laoliang.easyciplatform.repository.GithubAccountRepository;
-import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
-import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.GithubTokenResponse;
 import ink.laoliang.easyciplatform.exception.GithubAuthException;
+import ink.laoliang.easyciplatform.repository.GithubAccountRepository;
+import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
+import ink.laoliang.easyciplatform.repository.UserRepository;
+import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryBranch;
@@ -32,9 +33,8 @@ import java.util.List;
 @Service
 public class GithubServiceImpl implements GithubService {
 
-    private final String clientId = "384bd7c1472f8f66807d";
-    private final String clientSecret = "8dbb5c28d0bdcac525e0ad13c508442fbb91a3e9";
-    private final String scopes = "user:email,repo";
+    @Autowired
+    private CustomConfigration customConfigration;
 
     @Autowired
     private GithubTokenResponse githubTokenResponse;
@@ -56,7 +56,10 @@ public class GithubServiceImpl implements GithubService {
 
     @Override
     public RedirectView adk() {
-        String getUrl = "https://github.com/login/oauth/authorize?scope=" + scopes + "&client_id=" + clientId;
+        String getUrl = "https://github.com/login/oauth/authorize?scope=" +
+                customConfigration.getGithubAuthorizationScopes() +
+                "&client_id=" +
+                customConfigration.getGithubClientId();
         return new RedirectView(getUrl);
     }
 
@@ -64,8 +67,8 @@ public class GithubServiceImpl implements GithubService {
     public GithubTokenResponse callback(String code) {
         String url = "https://github.com/login/oauth/access_token";
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", clientId);
-        body.add("client_secret", clientSecret);
+        body.add("client_id", customConfigration.getGithubClientId());
+        body.add("client_secret", customConfigration.getGithubClientSecret());
         body.add("code", code);
         HttpEntity httpEntity = new HttpEntity(body, null);
 

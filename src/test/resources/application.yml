@@ -1,3 +1,4 @@
+# System Configuration
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
@@ -6,7 +7,7 @@ spring:
     password: root
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -14,3 +15,11 @@ spring:
 server:
   port: 8080
   context-path: /
+
+# Custom Configuration
+custom:
+  serverHost: http://6dc67abf.ngrok.io
+  githubClientId: 384bd7c1472f8f66807d
+  githubClientSecret: 8dbb5c28d0bdcac525e0ad13c508442fbb91a3e9
+  githubAuthorizationScopes: user:email,repo
+

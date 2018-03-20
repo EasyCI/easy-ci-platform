@@ -82,9 +82,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public GithubAccountResponse getGithubAccount(String userToken) {
         user = UserTokenByJwt.parserToken(userToken, userRepository);
-        githubAccount = githubAccountRepository.findByAuthorizeTo(user.getEmail());
-        githubAccountResponse.setGithubAccount(githubAccount);
-        githubAccountResponse.setGithubRepos(githubRepoRepository.findAllByLogin(githubAccount.getLogin()));
+        try {
+            githubAccount = githubAccountRepository.findByAuthorizeTo(user.getEmail());
+            githubAccountResponse.setGithubAccount(githubAccount);
+            githubAccountResponse.setGithubRepos(githubRepoRepository.findAllByLogin(githubAccount.getLogin()));
+        } catch (NullPointerException e){
+            githubAccountResponse.setGithubAccount(null);
+            githubAccountResponse.setGithubRepos(null);
+        }
         return githubAccountResponse;
     }
 

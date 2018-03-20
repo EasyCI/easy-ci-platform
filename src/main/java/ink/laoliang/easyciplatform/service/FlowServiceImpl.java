@@ -3,11 +3,12 @@ package ink.laoliang.easyciplatform.service;
 import ink.laoliang.easyciplatform.domain.Flow;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
 import ink.laoliang.easyciplatform.domain.Plugin;
+import ink.laoliang.easyciplatform.domain.request.FlowDeleteRequest;
+import ink.laoliang.easyciplatform.exception.GithubHookException;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
 import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
 import ink.laoliang.easyciplatform.repository.PluginRepository;
-import ink.laoliang.easyciplatform.domain.request.FlowDeleteRequest;
-import ink.laoliang.easyciplatform.exception.GithubHookException;
+import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.client.GitHubClient;
@@ -35,6 +36,9 @@ public class FlowServiceImpl implements FlowService {
     @Autowired
     private GithubRepoRepository githubRepoRepository;
 
+    @Autowired
+    private CustomConfigration customConfigration;
+
     @Override
     public List<Plugin> getPlugins() {
         return pluginRepository.findAll();
@@ -49,7 +53,7 @@ public class FlowServiceImpl implements FlowService {
         RepositoryHook repositoryHook = new RepositoryHook();
         Map<String, String> hookConfig = new HashMap<>();
         hookConfig.put("events", "push");
-        hookConfig.put("url", "http://ca1eaef2.ngrok.io/task/execute/" + id);
+        hookConfig.put("url", customConfigration.getServerHost() + "/task/trigger/" + id);
         hookConfig.put("content_type", "json");
         repositoryHook.setConfig(hookConfig);
         repositoryHook.setName("web");
