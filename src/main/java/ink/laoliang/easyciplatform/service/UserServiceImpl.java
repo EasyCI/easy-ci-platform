@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
             githubAccount = githubAccountRepository.findByAuthorizeTo(user.getEmail());
             githubAccountResponse.setGithubAccount(githubAccount);
             githubAccountResponse.setGithubRepos(githubRepoRepository.findAllByLogin(githubAccount.getLogin()));
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             githubAccountResponse.setGithubAccount(null);
             githubAccountResponse.setGithubRepos(null);
         }
@@ -100,13 +100,13 @@ public class UserServiceImpl implements UserService {
      */
     private void checkUserInfoIsLegal(User user) {
         if (!checkEmailFormatIsPass(user.getEmail())) {
-            throw new IllegalParameterException("【邮箱】格式非法");
+            throw new IllegalParameterException("【邮箱】格式非法，邮箱格式形如：example@domain");
         }
         if (!checkUsernameFormatIsPass(user.getUsername())) {
-            throw new IllegalParameterException("【用户名】格式非法");
+            throw new IllegalParameterException("【用户名】格式非法，请输入 5～20 位常规 ASCII 字符");
         }
         if (!checkPasswordFormatIsPass(user.getPassword())) {
-            throw new IllegalParameterException("【密码】格式非法");
+            throw new IllegalParameterException("【密码】格式非法，请输入 5～20 位常规 ASCII 字符");
         }
     }
 

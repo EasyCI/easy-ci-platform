@@ -13,9 +13,9 @@ public class TaskController {
 
         System.out.println("webhook 收到了！" + id);
         if (githubHookRequest.getRef() == null) {
-            System.out.println("这是首次创建 webhook");
+            System.out.println("这是首次创建webhook");
         } else {
-            System.out.println("这不是首次创建 webhook！！！" + githubHookRequest.getRef().split("/")[2]);
+            System.out.println("这不是首次创建webhook！！！" + githubHookRequest.getRef().split("/")[2]);
         }
         return "webhook 收到！";
     }
