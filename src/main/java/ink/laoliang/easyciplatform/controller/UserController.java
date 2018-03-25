@@ -25,11 +25,6 @@ public class UserController {
         return userService.login(email, password);
     }
 
-    @PostMapping(value = "/logout")
-    public User logout(@RequestHeader(value = "Authorization") String userToken) {
-        return userService.logout(userToken);
-    }
-
     @PostMapping(value = "/change_password")
     public User changePassword(@RequestHeader(value = "Authorization") String userToken,
                                @RequestParam String newPassword) {

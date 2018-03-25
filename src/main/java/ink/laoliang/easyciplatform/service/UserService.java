@@ -10,8 +10,6 @@ public interface UserService {
 
     LoginResponse login(String email, String password);
 
-    User logout(String userToken);
-
     User changePassword(String userToken, String newPassword);
 
     GithubAccountResponse getGithubAccount(String userToken);

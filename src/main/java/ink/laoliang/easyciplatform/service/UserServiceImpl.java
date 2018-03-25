@@ -68,11 +68,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User logout(String userToken) {
-        return UserTokenByJwt.parserToken(userToken, userRepository);
-    }
-
-    @Override
     public User changePassword(String userToken, String newPassword) {
         user = UserTokenByJwt.parserToken(userToken, userRepository);
         user.setPassword(MD5EncodeUtil.encode(newPassword));
