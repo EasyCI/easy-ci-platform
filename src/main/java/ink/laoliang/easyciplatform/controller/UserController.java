@@ -27,8 +27,9 @@ public class UserController {
 
     @PostMapping(value = "/change_password")
     public User changePassword(@RequestHeader(value = "Authorization") String userToken,
+                               @RequestParam String oldPassword,
                                @RequestParam String newPassword) {
-        return userService.changePassword(userToken, newPassword);
+        return userService.changePassword(userToken, oldPassword, newPassword);
     }
 
     @GetMapping(value = "/get_github_account")

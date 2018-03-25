@@ -10,7 +10,7 @@ public interface UserService {
 
     LoginResponse login(String email, String password);
 
-    User changePassword(String userToken, String newPassword);
+    User changePassword(String userToken, String oldPassword, String newPassword);
 
     GithubAccountResponse getGithubAccount(String userToken);
 }

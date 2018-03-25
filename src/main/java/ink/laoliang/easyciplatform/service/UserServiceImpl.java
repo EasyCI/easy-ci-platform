@@ -68,8 +68,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User changePassword(String userToken, String newPassword) {
+    public User changePassword(String userToken, String oldPassword, String newPassword) {
         user = UserTokenByJwt.parserToken(userToken, userRepository);
+        if (!user.getPassword().equals(MD5EncodeUtil.encode(oldPassword))) {
+            throw new IllegalParameterException("【原密码】错误");
+        }
+        
         user.setPassword(MD5EncodeUtil.encode(newPassword));
         return userRepository.save(user);
     }
