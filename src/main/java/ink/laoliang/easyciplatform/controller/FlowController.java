@@ -22,13 +22,13 @@ public class FlowController {
     }
 
     @PostMapping(value = "/create")
-    public Flow create(@RequestBody Flow flow,
+    public Flow createFlow(@RequestBody Flow flow,
                        @RequestHeader(value = "X-GitHub-Access-Token") String accessToken) {
         return flowService.createFlow(flow, accessToken);
     }
 
     @PostMapping(value = "/edit")
-    public Flow edit(@RequestBody Flow flow) {
+    public Flow editFlow(@RequestBody Flow flow) {
         return flowService.editFlow(flow);
     }
 
