@@ -23,7 +23,7 @@ public class FlowController {
 
     @PostMapping(value = "/create")
     public Flow createFlow(@RequestBody Flow flow,
-                       @RequestHeader(value = "X-GitHub-Access-Token") String accessToken) {
+                           @RequestHeader(value = "X-GitHub-Access-Token") String accessToken) {
         return flowService.createFlow(flow, accessToken);
     }
 

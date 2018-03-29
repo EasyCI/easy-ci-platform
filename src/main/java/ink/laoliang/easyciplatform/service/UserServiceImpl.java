@@ -1,13 +1,9 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.GithubAccount;
 import ink.laoliang.easyciplatform.domain.User;
-import ink.laoliang.easyciplatform.repository.GithubAccountRepository;
-import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
-import ink.laoliang.easyciplatform.repository.UserRepository;
-import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
 import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.exception.IllegalParameterException;
+import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +22,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private User user;
-
-    @Autowired
-    private GithubAccountRepository githubAccountRepository;
-
-    @Autowired
-    private GithubRepoRepository githubRepoRepository;
-
-    @Autowired
-    private GithubAccountResponse githubAccountResponse;
-
-    @Autowired
-    private GithubAccount githubAccount;
 
     @Override
     public User register(User user) {
@@ -73,23 +57,9 @@ public class UserServiceImpl implements UserService {
         if (!user.getPassword().equals(MD5EncodeUtil.encode(oldPassword))) {
             throw new IllegalParameterException("【原密码】错误");
         }
-        
+
         user.setPassword(MD5EncodeUtil.encode(newPassword));
         return userRepository.save(user);
-    }
-
-    @Override
-    public GithubAccountResponse getGithubAccount(String userToken) {
-        user = UserTokenByJwt.parserToken(userToken, userRepository);
-        try {
-            githubAccount = githubAccountRepository.findByAuthorizeTo(user.getEmail());
-            githubAccountResponse.setGithubAccount(githubAccount);
-            githubAccountResponse.setGithubRepos(githubRepoRepository.findAllByLogin(githubAccount.getLogin()));
-        } catch (NullPointerException e) {
-            githubAccountResponse.setGithubAccount(null);
-            githubAccountResponse.setGithubRepos(null);
-        }
-        return githubAccountResponse;
     }
 
     /**

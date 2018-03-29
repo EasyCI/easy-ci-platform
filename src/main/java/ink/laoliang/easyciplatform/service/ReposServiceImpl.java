@@ -2,8 +2,8 @@ package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.GithubAccount;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
+import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
-import ink.laoliang.easyciplatform.domain.response.GithubTokenResponse;
 import ink.laoliang.easyciplatform.exception.GithubAuthException;
 import ink.laoliang.easyciplatform.repository.GithubAccountRepository;
 import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
@@ -12,38 +12,26 @@ import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.RepositoryBranch;
-import org.eclipse.egit.github.core.User;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
-import org.eclipse.egit.github.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class GithubServiceImpl implements GithubService {
+public class ReposServiceImpl implements ReposService {
 
     @Autowired
     private CustomConfigration customConfigration;
 
     @Autowired
-    private GithubTokenResponse githubTokenResponse;
+    private UserRepository userRepository;
 
     @Autowired
-    private GithubAccountResponse githubAccountResponse;
-
-    @Autowired
-    private GithubAccount githubAccount;
+    private User user;
 
     @Autowired
     private GithubAccountRepository githubAccountRepository;
@@ -52,44 +40,39 @@ public class GithubServiceImpl implements GithubService {
     private GithubRepoRepository githubRepoRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private GithubAccountResponse githubAccountResponse;
+
+    @Autowired
+    private GithubAccount githubAccount;
 
     @Override
-    public RedirectView adk() {
-        String getUrl = "https://github.com/login/oauth/authorize?scope=" +
-                customConfigration.getGithubAuthorizationScopes() +
-                "&client_id=" +
-                customConfigration.getGithubClientId();
-        return new RedirectView(getUrl);
+    public String getGithubAuthUrl(String userToken) {
+        String url = "https://github.com/login/oauth/authorize?" +
+                "scope=" + customConfigration.getGithubAuthorizationScopes() +
+                "&client_id=" + customConfigration.getGithubClientId() +
+                "&state=" + userToken;
+        return url;
     }
 
     @Override
-    public GithubTokenResponse callback(String code) {
-        String url = "https://github.com/login/oauth/access_token";
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("client_id", customConfigration.getGithubClientId());
-        body.add("client_secret", customConfigration.getGithubClientSecret());
-        body.add("code", code);
-        HttpEntity httpEntity = new HttpEntity(body, null);
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-
-        if (responseEntity.getBody().toString().split("&")[0].split("=")[0].equals("error")) {
-            throw new GithubAuthException(responseEntity.getBody().toString().split("&")[1].split("=")[1]);
-        } else {
-            String accessToken = responseEntity.getBody().toString().split("&")[0].split("=")[1];
-            githubTokenResponse.setStatus("OK");
-            githubTokenResponse.setAccessToken(accessToken);
-            return githubTokenResponse;
+    public GithubAccountResponse getGithubAccount(String userToken) {
+        user = UserTokenByJwt.parserToken(userToken, userRepository);
+        try {
+            githubAccount = githubAccountRepository.findByAuthorizeTo(user.getEmail());
+            githubAccountResponse.setGithubAccount(githubAccount);
+            githubAccountResponse.setGithubRepos(githubRepoRepository.findAllByLogin(githubAccount.getLogin()));
+        } catch (NullPointerException e) {
+            githubAccountResponse.setGithubAccount(null);
+            githubAccountResponse.setGithubRepos(null);
         }
+        return githubAccountResponse;
     }
 
     @Override
-    public GithubAccountResponse updateAccount(String userToken, String accessToken) {
+    public GithubAccountResponse updateGithubAccount(String userToken, String accessToken) {
         try {
             GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
-            User user = new UserService(gitHubClient).getUser();
+            org.eclipse.egit.github.core.User user = new org.eclipse.egit.github.core.service.UserService(gitHubClient).getUser();
 
             githubAccount.setLogin(user.getLogin());
             githubAccount.setAccessToken(accessToken);
