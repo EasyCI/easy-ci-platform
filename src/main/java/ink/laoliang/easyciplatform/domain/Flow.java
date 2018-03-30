@@ -26,7 +26,7 @@ public class Flow extends BaseEntity {
     private Long hookId;
 
     @Column(nullable = false)
-    private String language;
+    private String platform;
 
     @Column(nullable = false)
     private String version;
@@ -35,7 +35,7 @@ public class Flow extends BaseEntity {
 
     private String[] plugins;
 
-    private String[] inputs;
+    private PluginEnv[] needEnv;
 
     public Flow() {
     }
@@ -80,12 +80,12 @@ public class Flow extends BaseEntity {
         this.hookId = hookId;
     }
 
-    public String getLanguage() {
-        return language;
+    public String getPlatform() {
+        return platform;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getVersion() {
@@ -112,11 +112,11 @@ public class Flow extends BaseEntity {
         this.plugins = plugins;
     }
 
-    public String[] getInputs() {
-        return inputs;
+    public PluginEnv[] getNeedEnv() {
+        return needEnv;
     }
 
-    public void setInputs(String[] inputs) {
-        this.inputs = inputs;
+    public void setNeedEnv(PluginEnv[] needEnv) {
+        this.needEnv = needEnv;
     }
 }

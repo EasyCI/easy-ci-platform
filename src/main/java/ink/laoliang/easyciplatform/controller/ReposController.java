@@ -1,6 +1,7 @@
 package ink.laoliang.easyciplatform.controller;
 
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
+import ink.laoliang.easyciplatform.domain.response.GithubAuthUrlResponse;
 import ink.laoliang.easyciplatform.service.ReposService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ public class ReposController {
     private ReposService reposService;
 
     @GetMapping(value = "/get_github_auth_url")
-    public String getGithubAuthUrl(@RequestHeader(value = "Authorization") String userToken) {
+    public GithubAuthUrlResponse getGithubAuthUrl(@RequestHeader(value = "Authorization") String userToken) {
         return reposService.getGithubAuthUrl(userToken);
     }
 

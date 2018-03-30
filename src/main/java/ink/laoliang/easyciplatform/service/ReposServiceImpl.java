@@ -4,6 +4,7 @@ import ink.laoliang.easyciplatform.domain.GithubAccount;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
 import ink.laoliang.easyciplatform.domain.User;
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
+import ink.laoliang.easyciplatform.domain.response.GithubAuthUrlResponse;
 import ink.laoliang.easyciplatform.exception.GithubAuthException;
 import ink.laoliang.easyciplatform.repository.GithubAccountRepository;
 import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
@@ -45,13 +46,17 @@ public class ReposServiceImpl implements ReposService {
     @Autowired
     private GithubAccount githubAccount;
 
+    @Autowired
+    private GithubAuthUrlResponse githubAuthUrlResponse;
+
     @Override
-    public String getGithubAuthUrl(String userToken) {
+    public GithubAuthUrlResponse getGithubAuthUrl(String userToken) {
         String url = "https://github.com/login/oauth/authorize?" +
                 "scope=" + customConfigration.getGithubAuthorizationScopes() +
                 "&client_id=" + customConfigration.getGithubClientId() +
                 "&state=" + userToken;
-        return url;
+        githubAuthUrlResponse.setUrl(url);
+        return githubAuthUrlResponse;
     }
 
     @Override

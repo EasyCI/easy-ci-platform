@@ -41,6 +41,8 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public List<Plugin> getPlugins() {
+        // 每次都更新初始化一下插件列表
+        initPluginList();
         return pluginRepository.findAll();
     }
 
@@ -116,5 +118,46 @@ public class FlowServiceImpl implements FlowService {
                 + flow.getUserEmail()
                 + githubRepo.getLogin()
                 + githubRepo.getName());
+    }
+
+    /**
+     * 系统每次添加新插件，就在这里添加新的一组
+     * 有空再把它提取到配置文件中
+     */
+    private void initPluginList() {
+        Plugin plugin;
+        String[] needEnv;
+
+        plugin = new Plugin();
+        plugin.setScriptName("unit_test");
+        plugin.setFullName("单元测试");
+        plugin.setDescription("用于构建项目单元测试");
+        needEnv = null;
+        plugin.setNeedEnv(needEnv);
+        pluginRepository.save(plugin);
+
+        plugin = new Plugin();
+        plugin.setScriptName("build_apk");
+        plugin.setFullName("Android 打包");
+        plugin.setDescription("编译生成 Android 项目的安装包");
+        needEnv = null;
+        plugin.setNeedEnv(needEnv);
+        pluginRepository.save(plugin);
+
+        plugin = new Plugin();
+        plugin.setScriptName("fir_upload");
+        plugin.setFullName("上传 fir");
+        plugin.setDescription("将打包产物上传到 fir.im 托管平台");
+        needEnv = new String[]{"FIR_API_TOKEN", "FIR_CHANGELOG"};
+        plugin.setNeedEnv(needEnv);
+        pluginRepository.save(plugin);
+
+        plugin = new Plugin();
+        plugin.setScriptName("send_email");
+        plugin.setFullName("邮件通知");
+        plugin.setDescription("将构建结果发送到指定的邮箱");
+        needEnv = new String[]{"EMAIL_ADDRESS"};
+        plugin.setNeedEnv(needEnv);
+        pluginRepository.save(plugin);
     }
 }

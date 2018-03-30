@@ -1,9 +1,10 @@
 package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.response.GithubAccountResponse;
+import ink.laoliang.easyciplatform.domain.response.GithubAuthUrlResponse;
 
 public interface ReposService {
-    String getGithubAuthUrl(String userToken);
+    GithubAuthUrlResponse getGithubAuthUrl(String userToken);
 
     GithubAccountResponse getGithubAccount(String userToken);
 

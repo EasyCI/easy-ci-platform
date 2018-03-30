@@ -18,6 +18,8 @@ public class Plugin {
 
     private String description;
 
+    private String[] needEnv;
+
     public Plugin() {
     }
 
@@ -43,5 +45,13 @@ public class Plugin {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String[] getNeedEnv() {
+        return needEnv;
+    }
+
+    public void setNeedEnv(String[] needEnv) {
+        this.needEnv = needEnv;
     }
 }
