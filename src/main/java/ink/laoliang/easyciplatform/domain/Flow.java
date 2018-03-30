@@ -20,6 +20,9 @@ public class Flow extends BaseEntity {
     private String userEmail;
 
     @Column(nullable = false)
+    private String repoOrigin;
+
+    @Column(nullable = false)
     private Long repoId;
 
     @Column(nullable = false)
@@ -63,6 +66,14 @@ public class Flow extends BaseEntity {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getRepoOrigin() {
+        return repoOrigin;
+    }
+
+    public void setRepoOrigin(String repoOrigin) {
+        this.repoOrigin = repoOrigin;
     }
 
     public Long getRepoId() {
