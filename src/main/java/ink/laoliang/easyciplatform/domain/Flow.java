@@ -35,6 +35,7 @@ public class Flow extends BaseEntity {
 
     private String[] plugins;
 
+    @Column(columnDefinition = "longblob")
     private PluginEnv[] needEnv;
 
     public Flow() {

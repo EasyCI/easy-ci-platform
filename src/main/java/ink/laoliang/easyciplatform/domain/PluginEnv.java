@@ -2,8 +2,10 @@ package ink.laoliang.easyciplatform.domain;
 
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
-public class PluginEnv {
+public class PluginEnv implements Serializable {
 
     private String envName;
 
