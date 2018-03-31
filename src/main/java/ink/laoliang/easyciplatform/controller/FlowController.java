@@ -1,8 +1,8 @@
 package ink.laoliang.easyciplatform.controller;
 
 import ink.laoliang.easyciplatform.domain.Flow;
-import ink.laoliang.easyciplatform.domain.Plugin;
 import ink.laoliang.easyciplatform.domain.request.FlowDeleteRequest;
+import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.service.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ public class FlowController {
     private FlowService flowService;
 
     @GetMapping(value = "/get_plugins")
-    public List<Plugin> getPlugins() {
+    public PluginsResponse getPlugins() {
         return flowService.getPlugins();
     }
 

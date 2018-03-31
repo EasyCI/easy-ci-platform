@@ -4,6 +4,7 @@ import ink.laoliang.easyciplatform.domain.Flow;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
 import ink.laoliang.easyciplatform.domain.Plugin;
 import ink.laoliang.easyciplatform.domain.request.FlowDeleteRequest;
+import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.exception.GithubHookException;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
 import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
@@ -39,11 +40,15 @@ public class FlowServiceImpl implements FlowService {
     @Autowired
     private CustomConfigration customConfigration;
 
+    @Autowired
+    private PluginsResponse pluginsResponse;
+
     @Override
-    public List<Plugin> getPlugins() {
+    public PluginsResponse getPlugins() {
         // 每次都更新初始化一下插件列表
         initPluginList();
-        return pluginRepository.findAll();
+        pluginsResponse.setPlugins(pluginRepository.findAll());
+        return pluginsResponse;
     }
 
     @Override
