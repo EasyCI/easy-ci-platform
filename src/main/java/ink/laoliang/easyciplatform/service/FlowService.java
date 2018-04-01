@@ -2,6 +2,7 @@ package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.Flow;
 import ink.laoliang.easyciplatform.domain.request.DeleteFlowRequest;
+import ink.laoliang.easyciplatform.domain.response.CommonOkResponse;
 import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface FlowService {
 
     List<Flow> getAllFlow(String userToken);
 
-    void deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken);
+    CommonOkResponse deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken);
 }

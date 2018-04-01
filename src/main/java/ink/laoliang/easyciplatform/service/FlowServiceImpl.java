@@ -2,6 +2,7 @@ package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.*;
 import ink.laoliang.easyciplatform.domain.request.DeleteFlowRequest;
+import ink.laoliang.easyciplatform.domain.response.CommonOkResponse;
 import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.exception.GithubHookException;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
@@ -103,7 +104,7 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public void deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken) {
+    public CommonOkResponse deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken) {
         // 删除远程仓库 WebHook
         GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
         RepositoryService repositoryService = new RepositoryService(gitHubClient);
@@ -116,6 +117,7 @@ public class FlowServiceImpl implements FlowService {
 
         // 删库
         flowRepository.delete(deleteFlowRequest.getFlowId());
+        return new CommonOkResponse();
     }
 
     /**
