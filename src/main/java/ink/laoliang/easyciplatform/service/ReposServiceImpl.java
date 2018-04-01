@@ -79,6 +79,7 @@ public class ReposServiceImpl implements ReposService {
             GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
             org.eclipse.egit.github.core.User user = new org.eclipse.egit.github.core.service.UserService(gitHubClient).getUser();
 
+            GithubAccount githubAccount = new GithubAccount();
             githubAccount.setLogin(user.getLogin());
             githubAccount.setAccessToken(accessToken);
             githubAccount.setAvatarUrl(user.getAvatarUrl());

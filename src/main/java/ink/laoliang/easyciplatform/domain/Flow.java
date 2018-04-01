@@ -39,7 +39,7 @@ public class Flow extends BaseEntity {
     private String[] plugins;
 
     @Column(columnDefinition = "longblob")
-    private PluginEnv[] needEnv;
+    private String[] needEnv;
 
     public Flow() {
     }
@@ -124,11 +124,11 @@ public class Flow extends BaseEntity {
         this.plugins = plugins;
     }
 
-    public PluginEnv[] getNeedEnv() {
+    public String[] getNeedEnv() {
         return needEnv;
     }
 
-    public void setNeedEnv(PluginEnv[] needEnv) {
+    public void setNeedEnv(String[] needEnv) {
         this.needEnv = needEnv;
     }
 }
