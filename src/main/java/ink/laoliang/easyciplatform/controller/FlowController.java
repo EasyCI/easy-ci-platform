@@ -33,8 +33,8 @@ public class FlowController {
     }
 
     @GetMapping(value = "/get_all")
-    public List<Flow> getAllFlow() {
-        return flowService.getAllFlow();
+    public List<Flow> getAllFlow(@RequestHeader(value = "Authorization") String userToken) {
+        return flowService.getAllFlow(userToken);
     }
 
     @PostMapping(value = "/delete")

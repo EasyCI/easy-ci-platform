@@ -22,7 +22,7 @@ server:
 
 # Custom Configuration
 custom:
-  serverHost: http://9573f730.ngrok.io
+  serverHost: http://bb6a6594.ngrok.io
   githubClientId: 384bd7c1472f8f66807d
   githubClientSecret: 8dbb5c28d0bdcac525e0ad13c508442fbb91a3e9
   githubAuthorizationScopes: user:email,repo

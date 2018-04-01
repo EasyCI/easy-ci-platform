@@ -13,7 +13,7 @@ public interface FlowService {
 
     Flow editFlow(Flow flow);
 
-    List<Flow> getAllFlow();
+    List<Flow> getAllFlow(String userToken);
 
     void deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken);
 }

@@ -1,17 +1,16 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.Flow;
-import ink.laoliang.easyciplatform.domain.GithubRepo;
-import ink.laoliang.easyciplatform.domain.Plugin;
-import ink.laoliang.easyciplatform.domain.PluginEnv;
+import ink.laoliang.easyciplatform.domain.*;
 import ink.laoliang.easyciplatform.domain.request.DeleteFlowRequest;
 import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.exception.GithubHookException;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
 import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
 import ink.laoliang.easyciplatform.repository.PluginRepository;
+import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
+import ink.laoliang.easyciplatform.util.UserTokenByJwt;
 import org.eclipse.egit.github.core.RepositoryHook;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
@@ -43,6 +42,12 @@ public class FlowServiceImpl implements FlowService {
 
     @Autowired
     private PluginsResponse pluginsResponse;
+
+    @Autowired
+    private User user;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public PluginsResponse getPlugins() {
@@ -92,8 +97,9 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public List<Flow> getAllFlow() {
-        return flowRepository.findAll();
+    public List<Flow> getAllFlow(String userToken) {
+        user = UserTokenByJwt.parserToken(userToken, userRepository);
+        return flowRepository.findAllByUserEmail(user.getEmail());
     }
 
     @Override
