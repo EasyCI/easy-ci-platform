@@ -3,7 +3,8 @@ package ink.laoliang.easyciplatform.service;
 import ink.laoliang.easyciplatform.domain.Flow;
 import ink.laoliang.easyciplatform.domain.GithubRepo;
 import ink.laoliang.easyciplatform.domain.Plugin;
-import ink.laoliang.easyciplatform.domain.request.FlowDeleteRequest;
+import ink.laoliang.easyciplatform.domain.PluginEnv;
+import ink.laoliang.easyciplatform.domain.request.DeleteFlowRequest;
 import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.exception.GithubHookException;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
@@ -96,19 +97,19 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
-    public void deleteFlow(FlowDeleteRequest flowDeleteRequest, String accessToken) {
+    public void deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken) {
         // 删除远程仓库 WebHook
         GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
         RepositoryService repositoryService = new RepositoryService(gitHubClient);
-        githubRepo = githubRepoRepository.findById(flowDeleteRequest.getRepoId());
+        githubRepo = githubRepoRepository.findById(deleteFlowRequest.getRepoId());
         try {
-            repositoryService.deleteHook(repositoryService.getRepository(githubRepo.getLogin(), githubRepo.getName()), flowDeleteRequest.getHookId());
+            repositoryService.deleteHook(repositoryService.getRepository(githubRepo.getLogin(), githubRepo.getName()), deleteFlowRequest.getHookId());
         } catch (IOException e) {
             throw new GithubHookException(e.getMessage());
         }
 
         // 删库
-        flowRepository.delete(flowDeleteRequest.getFlowId());
+        flowRepository.delete(deleteFlowRequest.getFlowId());
     }
 
     /**
@@ -131,7 +132,7 @@ public class FlowServiceImpl implements FlowService {
      */
     private void initPluginList() {
         Plugin plugin;
-        String[] needEnv;
+        PluginEnv[] needEnv;
 
         plugin = new Plugin();
         plugin.setScriptName("unit_test");
@@ -153,7 +154,10 @@ public class FlowServiceImpl implements FlowService {
         plugin.setScriptName("fir_upload");
         plugin.setFullName("上传 fir");
         plugin.setDescription("将打包产物上传到 fir.im 托管平台");
-        needEnv = new String[]{"FIR_API_TOKEN", "FIR_CHANGELOG"};
+        needEnv = new PluginEnv[]{
+                new PluginEnv("FIR_API_TOKEN", null, "【必填项】fir.im 的 API Token，可从您 fir.im 账户管理中获取"),
+                new PluginEnv("FIR_CHANGELOG", null, "【选填项】为 fir.im 应用托管更新自定义日志")
+        };
         plugin.setNeedEnv(needEnv);
         pluginRepository.save(plugin);
 
@@ -161,7 +165,9 @@ public class FlowServiceImpl implements FlowService {
         plugin.setScriptName("send_email");
         plugin.setFullName("邮件通知");
         plugin.setDescription("将构建结果发送到指定的邮箱");
-        needEnv = new String[]{"EMAIL_ADDRESS"};
+        needEnv = new PluginEnv[]{
+                new PluginEnv("EMAIL_ADDRESS", null, "【必填项】邮件通知插件的邮件接收地址")
+        };
         plugin.setNeedEnv(needEnv);
         pluginRepository.save(plugin);
     }

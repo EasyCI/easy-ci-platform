@@ -11,7 +11,15 @@ public class PluginEnv implements Serializable {
 
     private String envValue;
 
+    private String envDescription;
+
     public PluginEnv() {
+    }
+
+    public PluginEnv(String envName, String envValue, String envDescription) {
+        this.envName = envName;
+        this.envValue = envValue;
+        this.envDescription = envDescription;
     }
 
     public PluginEnv(String envName, String envValue) {
@@ -33,5 +41,13 @@ public class PluginEnv implements Serializable {
 
     public void setEnvValue(String envValue) {
         this.envValue = envValue;
+    }
+
+    public String getEnvDescription() {
+        return envDescription;
+    }
+
+    public void setEvnDescription(String envDescription) {
+        this.envDescription = envDescription;
     }
 }

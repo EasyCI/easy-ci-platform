@@ -1,7 +1,7 @@
 package ink.laoliang.easyciplatform.controller;
 
 import ink.laoliang.easyciplatform.domain.Flow;
-import ink.laoliang.easyciplatform.domain.request.FlowDeleteRequest;
+import ink.laoliang.easyciplatform.domain.request.DeleteFlowRequest;
 import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.service.FlowService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +38,8 @@ public class FlowController {
     }
 
     @PostMapping(value = "/delete")
-    public void deleteFlow(@RequestBody FlowDeleteRequest flowDeleteRequest,
+    public void deleteFlow(@RequestBody DeleteFlowRequest deleteFlowRequest,
                            @RequestHeader(value = "X-GitHub-Access-Token") String accessToken) {
-        flowService.deleteFlow(flowDeleteRequest, accessToken);
+        flowService.deleteFlow(deleteFlowRequest, accessToken);
     }
 }

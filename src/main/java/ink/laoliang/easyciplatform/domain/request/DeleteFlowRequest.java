@@ -1,6 +1,6 @@
 package ink.laoliang.easyciplatform.domain.request;
 
-public class FlowDeleteRequest {
+public class DeleteFlowRequest {
 
     private String flowId;
 
@@ -8,7 +8,7 @@ public class FlowDeleteRequest {
 
     private Long repoId;
 
-    public FlowDeleteRequest(){
+    public DeleteFlowRequest(){
     }
 
     public String getFlowId() {

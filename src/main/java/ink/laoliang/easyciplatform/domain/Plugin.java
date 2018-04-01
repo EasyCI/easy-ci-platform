@@ -18,7 +18,8 @@ public class Plugin {
 
     private String description;
 
-    private String[] needEnv;
+    @Column(columnDefinition = "longblob")
+    private PluginEnv[] needEnv;
 
     public Plugin() {
     }
@@ -47,11 +48,11 @@ public class Plugin {
         this.description = description;
     }
 
-    public String[] getNeedEnv() {
+    public PluginEnv[] getNeedEnv() {
         return needEnv;
     }
 
-    public void setNeedEnv(String[] needEnv) {
+    public void setNeedEnv(PluginEnv[] needEnv) {
         this.needEnv = needEnv;
     }
 }
