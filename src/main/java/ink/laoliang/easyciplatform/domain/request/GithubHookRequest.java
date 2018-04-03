@@ -30,11 +30,11 @@ public class GithubHookRequest {
         this.ref = ref;
     }
 
-    public Boolean getManual() {
+    public Boolean getIsManual() {
         return isManual;
     }
 
-    public void setManual(Boolean manual) {
+    public void setIsManual(Boolean manual) {
         isManual = manual;
     }
 

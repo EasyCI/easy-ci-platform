@@ -13,7 +13,7 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @PostMapping(value = "/trigger/{id}")
+    @PostMapping(value = "/trigger/{flowId}")
     public CommonOkResponse trigger(@PathVariable String flowId,
                                     @RequestBody GithubHookRequest githubHookRequest) {
         return taskService.trigger(flowId, githubHookRequest);
