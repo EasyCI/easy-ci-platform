@@ -105,18 +105,22 @@ public class FlowServiceImpl implements FlowService {
 
     @Override
     public CommonOkResponse deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken) {
-        // 删除远程仓库 WebHook
+
         GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
         RepositoryService repositoryService = new RepositoryService(gitHubClient);
         githubRepo = githubRepoRepository.findById(deleteFlowRequest.getRepoId());
         try {
+            // 尝试删除远程仓库 WebHook
             repositoryService.deleteHook(repositoryService.getRepository(githubRepo.getLogin(), githubRepo.getName()), deleteFlowRequest.getHookId());
+            // 删库
+            flowRepository.delete(deleteFlowRequest.getFlowId());
         } catch (IOException e) {
-            throw new GithubHookException(e.getMessage());
+            // 遇到异常说明 GitHub 上的 WebHook 已经被用户自行删除，
+            // 这里因为 WebHook 不存在而响应异常，
+            // 所以继续删库即可！O(∩_∩)O～
+            flowRepository.delete(deleteFlowRequest.getFlowId());
         }
 
-        // 删库
-        flowRepository.delete(deleteFlowRequest.getFlowId());
         return new CommonOkResponse();
     }
 
