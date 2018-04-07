@@ -2,6 +2,7 @@ package ink.laoliang.easyciplatform.service;
 
 import ink.laoliang.easyciplatform.domain.*;
 import ink.laoliang.easyciplatform.domain.request.GithubHookRequest;
+import ink.laoliang.easyciplatform.domain.response.BuildDetailResponse;
 import ink.laoliang.easyciplatform.domain.response.CommonOkResponse;
 import ink.laoliang.easyciplatform.repository.BuildDetailRepository;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
@@ -10,6 +11,7 @@ import ink.laoliang.easyciplatform.repository.PluginRepository;
 import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -39,6 +41,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private CustomConfigration customConfigration;
+
+    @Autowired
+    private BuildDetailResponse buildDetailResponse;
 
     @Override
     public CommonOkResponse trigger(String flowId, GithubHookRequest githubHookRequest) {
@@ -77,6 +82,14 @@ public class TaskServiceImpl implements TaskService {
         return new CommonOkResponse();
     }
 
+    @Override
+    public BuildDetailResponse upToDate(String flowId) {
+        Sort orders = new Sort(Sort.Direction.DESC, "queueNumber");
+        List<BuildDetail> buildDetails = buildDetailRepository.findAllByFlowId(flowId, orders);
+        buildDetailResponse.setBuildDetails(buildDetails);
+        return buildDetailResponse;
+    }
+
     /**
      * 执行具体的构建任务
      *
@@ -92,7 +105,7 @@ public class TaskServiceImpl implements TaskService {
         GithubRepo githubRepo = githubRepoRepository.findOne(flow.getRepoId());
 
         buildDetail.setId(generateTaskId(flowId));
-        buildDetail.setQueueNumber(buildDetailRepository.findAllByFlowId(flowId).size() + 1);
+        buildDetail.setQueueNumber(buildDetailRepository.findAllByFlowId(flowId, null).size() + 1);
         buildDetail.setFlowId(flowId);
         buildDetail.setTriggerBranch(triggerBranch);
         buildDetail.setManual(isManual);
@@ -226,7 +239,6 @@ public class TaskServiceImpl implements TaskService {
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(executeStatement);
-            // ProcessBuilder processBuilder = new ProcessBuilder("python", "./script/test.py");
             processBuilder.redirectErrorStream(true);
 
             // 获取开始时间
@@ -266,7 +278,7 @@ public class TaskServiceImpl implements TaskService {
         } catch (IOException e) {
             logBuilder.append("Cannot run program python: CreateProcess error=2, 系统找不到指定的文件。\n");
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logBuilder.append(e.getMessage() + "\n");
         }
 
         return logBuilder.toString().substring(0, logBuilder.lastIndexOf("\n")) + "\n" +
