@@ -1,14 +1,13 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.BuildDetail;
-import ink.laoliang.easyciplatform.domain.Flow;
-import ink.laoliang.easyciplatform.domain.Plugin;
-import ink.laoliang.easyciplatform.domain.PluginEnv;
+import ink.laoliang.easyciplatform.domain.*;
 import ink.laoliang.easyciplatform.domain.request.GithubHookRequest;
 import ink.laoliang.easyciplatform.domain.response.CommonOkResponse;
 import ink.laoliang.easyciplatform.repository.BuildDetailRepository;
 import ink.laoliang.easyciplatform.repository.FlowRepository;
+import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
 import ink.laoliang.easyciplatform.repository.PluginRepository;
+import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,12 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private PluginRepository pluginRepository;
 
+    @Autowired
+    private GithubRepoRepository githubRepoRepository;
+
+    @Autowired
+    private CustomConfigration customConfigration;
+
     @Override
     public CommonOkResponse trigger(String flowId, GithubHookRequest githubHookRequest) {
         String triggerBranch;
@@ -44,13 +49,13 @@ public class TaskServiceImpl implements TaskService {
             // GitHub WebHook 触发的
             triggerBranch = githubHookRequest.getRef().split("/")[2];
             isManual = false;
-            // 创建一个线程执行构建任务
-            // execute(flowId, triggerBranch, isManual);
             System.out.println("=====================================");
             System.out.println("开始执行 Flow：" + flowId);
             System.out.println("触发执行的分支是：" + triggerBranch);
             System.out.println("是否为手动触发：" + isManual);
             System.out.println("=====================================");
+            // 创建一个线程执行构建任务
+            new Thread(() -> execute(flowId, triggerBranch, isManual)).start();
             return new CommonOkResponse();
         }
 
@@ -58,13 +63,13 @@ public class TaskServiceImpl implements TaskService {
             // 手动触发的
             triggerBranch = githubHookRequest.getTriggerBranch();
             isManual = true;
-            // 创建一个线程执行构建任务
-            // execute(flowId, triggerBranch, isManual);
             System.out.println("=====================================");
             System.out.println("开始执行 Flow：" + flowId);
             System.out.println("触发执行的分支是：" + triggerBranch);
             System.out.println("是否为手动触发：" + isManual);
             System.out.println("=====================================");
+            // 创建一个线程执行构建任务
+            new Thread(() -> execute(flowId, triggerBranch, isManual)).start();
             return new CommonOkResponse();
         }
 
@@ -79,8 +84,12 @@ public class TaskServiceImpl implements TaskService {
      * @param triggerBranch
      */
     private void execute(String flowId, String triggerBranch, Boolean isManual) {
+        long startTime = System.currentTimeMillis();
+        Boolean isSuccess = true;
+
         BuildDetail buildDetail = new BuildDetail();
         Flow flow = flowRepository.findOne(flowId);
+        GithubRepo githubRepo = githubRepoRepository.findOne(flow.getRepoId());
 
         buildDetail.setId(generateTaskId(flowId));
         buildDetail.setQueueNumber(buildDetailRepository.findAllByFlowId(flowId).size() + 1);
@@ -96,11 +105,13 @@ public class TaskServiceImpl implements TaskService {
         for (String scriptName : flow.getPlugins()) {
             Plugin plugin = pluginRepository.findOne(scriptName);
             List<PluginEnv> pluginEnvs = new ArrayList<>();
-            for (PluginEnv pluginEnv : plugin.getNeedEnv()) {
-                for (String needEnv : flow.getNeedEnv()) {
-                    if (pluginEnv.getEnvName().equals(needEnv.split("===")[0])) {
-                        pluginEnv.setEnvValue(needEnv.split("===")[1]);
-                        pluginEnvs.add(pluginEnv);
+            if (plugin.getNeedEnv() != null) {
+                for (PluginEnv pluginEnv : plugin.getNeedEnv()) {
+                    for (String needEnv : flow.getNeedEnv()) {
+                        if (pluginEnv.getEnvName().equals(needEnv.split("===")[0])) {
+                            pluginEnv.setEnvValue(needEnv.split("===")[1]);
+                            pluginEnvs.add(pluginEnv);
+                        }
                     }
                 }
             }
@@ -108,17 +119,78 @@ public class TaskServiceImpl implements TaskService {
             pluginList.add(plugin);
         }
 
-        // 开始必备两步 (git clone & init)
+        // 开始必备两步 (git clone & init env)
+        List<String> scriptParameters = new ArrayList<>();
+        scriptParameters.add(flowId);
+        scriptParameters.add(githubRepo.getName());
+        scriptParameters.add(flow.getPlatform());
+        scriptParameters.add(githubRepo.getCloneUrl());
+        scriptParameters.add(triggerBranch);
+        String log;
+        log = executeScript("git_clone", scriptParameters.toArray(new String[scriptParameters.size()]));
+        System.out.println(log);
+        log = executeScript("init_env", scriptParameters.toArray(new String[scriptParameters.size()]));
+        System.out.println(log);
 
-
-        // 依次跑脚本插件
+        // 依次跑其余自定义脚本插件
+        List<BuildLog> buildLogs = new ArrayList<>();
         for (Plugin plugin : pluginList) {
-            List<String> scriptParameters = new ArrayList<>();
+            scriptParameters = new ArrayList<>();
+            scriptParameters.add(flowId);
+            scriptParameters.add(githubRepo.getName());
+            scriptParameters.add(flow.getPlatform());
             for (PluginEnv pluginEnv : plugin.getNeedEnv()) {
                 scriptParameters.add(pluginEnv.getEnvValue());
             }
-            executeScript(plugin.getScriptName(), scriptParameters.toArray(new String[scriptParameters.size()]));
+            // 如果这是最后一步——“邮件通知”，那么将会检测当前是否有产物输出，如果有，将会作为邮件内容添加到参数列表末尾用于构建邮件通知
+            if (plugin.getScriptName().equals("send_email")) {
+                String productPreviewUrl = buildDetail.getProductPreviewUrl();
+                if (productPreviewUrl != null) {
+                    scriptParameters.add(productPreviewUrl);
+                }
+            }
+            log = executeScript(plugin.getScriptName(), scriptParameters.toArray(new String[scriptParameters.size()]));
+            System.out.println(log);
+            // 更新 Build_Detail 数据表
+            BuildLog buildLog = new BuildLog();
+            if (log.charAt(log.length() - 1) == '0') {
+                // 当前插件运行成功
+                buildLog.setStepName(plugin.getFullName());
+                buildLog.setComplete(true);
+                buildLog.setLogContent(log);
+                buildLog.setSuccess(true);
+                buildLogs.add(buildLog);
+                buildDetail.setBuildLogs(buildLogs.toArray(new BuildLog[buildLogs.size()]));
+                // 如果当前步骤有产物出现，将产物也更新到 Build_Detail 数据表中
+                if (plugin.getScriptName().equals("fir_upload")) {
+                    String previewUrl = log.split("\n")[1].split(" ")[2];
+                    buildDetail.setProductPreviewUrl(previewUrl);
+                }
+                buildDetailRepository.save(buildDetail);
+            } else {
+                // 当前插件运行失败
+                buildLog.setStepName(plugin.getFullName());
+                buildLog.setComplete(true);
+                buildLog.setLogContent(log);
+                buildLog.setSuccess(false);
+                buildLogs.add(buildLog);
+                buildDetail.setBuildLogs(buildLogs.toArray(new BuildLog[buildLogs.size()]));
+                buildDetailRepository.save(buildDetail);
+                isSuccess = false;
+            }
         }
+
+        // 最后执行清理脚本
+        executeScript("clean", new String[]{flowId});
+
+        // 更新构建状态
+        buildDetail.setBuilding(false);
+        // 更新构建结果
+        buildDetail.setSuccess(isSuccess);
+        // 更新用时
+        long endTime = System.currentTimeMillis();
+        buildDetail.setDuration(((float) (endTime - startTime) / 1000) + "s");
+        buildDetailRepository.save(buildDetail);
     }
 
     /**
@@ -133,11 +205,11 @@ public class TaskServiceImpl implements TaskService {
 
     private String executeScript(String scriptName, String[] scriptParameters) {
         // 拼接脚本文件名称
-        String pythonScript = System.getProperty("user.dir") + "\\script\\" + scriptName + ".py";
+        String pythonScript = customConfigration.getPluginScriptPath() + scriptName + ".py";
 
         // 拼接执行脚本语句
         List<String> executeStatement = new ArrayList<>();
-        executeStatement.add("python");
+        executeStatement.add("python3");
         executeStatement.add(pythonScript);
         if (scriptParameters != null) {
             for (String parameter : scriptParameters) {

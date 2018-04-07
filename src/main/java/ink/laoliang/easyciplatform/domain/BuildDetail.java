@@ -38,9 +38,10 @@ public class BuildDetail extends BaseEntity {
     @Column(nullable = false)
     private String version;
 
+    @Column(columnDefinition = "longblob")
     private BuildLog[] buildLogs;
 
-    private ProductStorage[] productStorage;
+    private String productPreviewUrl;
 
     public BuildDetail() {
     }
@@ -133,11 +134,11 @@ public class BuildDetail extends BaseEntity {
         this.buildLogs = buildLogs;
     }
 
-    public ProductStorage[] getProductStorage() {
-        return productStorage;
+    public String getProductPreviewUrl() {
+        return productPreviewUrl;
     }
 
-    public void setProductStorage(ProductStorage[] productStorage) {
-        this.productStorage = productStorage;
+    public void setProductPreviewUrl(String productPreviewUrl) {
+        this.productPreviewUrl = productPreviewUrl;
     }
 }

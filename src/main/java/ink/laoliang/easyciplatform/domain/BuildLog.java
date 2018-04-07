@@ -1,6 +1,8 @@
 package ink.laoliang.easyciplatform.domain;
 
-public class BuildLog {
+import java.io.Serializable;
+
+public class BuildLog implements Serializable {
 
     private String stepName;
 

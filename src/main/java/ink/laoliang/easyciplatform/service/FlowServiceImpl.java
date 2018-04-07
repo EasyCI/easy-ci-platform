@@ -77,7 +77,7 @@ public class FlowServiceImpl implements FlowService {
         GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
         RepositoryService repositoryService = new RepositoryService(gitHubClient);
         try {
-            githubRepo = githubRepoRepository.findById(flow.getRepoId());
+            githubRepo = githubRepoRepository.findOne(flow.getRepoId());
             repositoryHook = repositoryService.createHook(repositoryService.getRepository(githubRepo.getLogin(), githubRepo.getName()), repositoryHook);
         } catch (IOException e) {
             throw new GithubHookException(e.getMessage());
@@ -108,7 +108,7 @@ public class FlowServiceImpl implements FlowService {
 
         GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
         RepositoryService repositoryService = new RepositoryService(gitHubClient);
-        githubRepo = githubRepoRepository.findById(deleteFlowRequest.getRepoId());
+        githubRepo = githubRepoRepository.findOne(deleteFlowRequest.getRepoId());
         try {
             // 尝试删除远程仓库 WebHook
             repositoryService.deleteHook(repositoryService.getRepository(githubRepo.getLogin(), githubRepo.getName()), deleteFlowRequest.getHookId());
@@ -131,7 +131,7 @@ public class FlowServiceImpl implements FlowService {
      * @return
      */
     private String generateFlowId(Flow flow) {
-        githubRepo = githubRepoRepository.findById(flow.getRepoId());
+        githubRepo = githubRepoRepository.findOne(flow.getRepoId());
         return MD5EncodeUtil.encode(flow.getName()
                 + flow.getUserEmail()
                 + githubRepo.getLogin()

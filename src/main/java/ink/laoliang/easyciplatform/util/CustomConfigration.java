@@ -15,6 +15,8 @@ public class CustomConfigration {
 
     private String githubAuthorizationScopes;
 
+    private String pluginScriptPath;
+
     public String getServerHost() {
         return serverHost;
     }
@@ -45,5 +47,13 @@ public class CustomConfigration {
 
     public void setGithubAuthorizationScopes(String authorizationScopes) {
         this.githubAuthorizationScopes = authorizationScopes;
+    }
+
+    public String getPluginScriptPath() {
+        return pluginScriptPath;
+    }
+
+    public void setPluginScriptPath(String pluginScriptPath) {
+        this.pluginScriptPath = pluginScriptPath;
     }
 }
