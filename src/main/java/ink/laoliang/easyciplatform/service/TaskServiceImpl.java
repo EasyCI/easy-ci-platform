@@ -9,6 +9,7 @@ import ink.laoliang.easyciplatform.repository.FlowRepository;
 import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
 import ink.laoliang.easyciplatform.repository.PluginRepository;
 import ink.laoliang.easyciplatform.util.CustomConfigration;
+import ink.laoliang.easyciplatform.util.FormatDuration;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -202,7 +203,7 @@ public class TaskServiceImpl implements TaskService {
         buildDetail.setSuccess(isSuccess);
         // 更新用时
         long endTime = System.currentTimeMillis();
-        buildDetail.setDuration(((float) (endTime - startTime) / 1000) + "s");
+        buildDetail.setDuration(FormatDuration.byMillisecond(endTime - startTime));
         buildDetailRepository.save(buildDetail);
     }
 
@@ -285,7 +286,7 @@ public class TaskServiceImpl implements TaskService {
                 "[EasyCI] ------------------------------------------------------------------------\n" +
                 "[EasyCI] " + scriptName.toUpperCase() + " " + stepStatus + "\n" +
                 "[EasyCI] ------------------------------------------------------------------------\n" +
-                "[EasyCI] Total time: " + ((float) (endTime - startTime) / 1000) + " s\n" +
+                "[EasyCI] Duration: " + FormatDuration.byMillisecond(endTime - startTime) + "\n" +
                 "[EasyCI] Finished at: " + new Date(endTime) + "\n" +
                 "[EasyCI] ------------------------------------------------------------------------\n" +
                 "[EasyCI] Exit: " + scriptExitValue; // 最后的 Python 脚本退出码用于前端判断任务执行状态
