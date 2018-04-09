@@ -1,9 +1,101 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <meta charset="UTF-8">
     <title>授权成功</title>
+    <script>
+        function CloseWebPage() {
+            if (navigator.userAgent.indexOf("MSIE") > 0) {
+                if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+                    window.opener = null;
+                    window.close();
+                } else {
+                    window.open('', '_top');
+                    window.top.close();
+                }
+            }
+            else if (navigator.userAgent.indexOf("Firefox") > 0) {
+                window.location.href = 'about:blank ';
+            } else {
+                window.opener = null;
+                window.open('', '_self', '');
+                window.close();
+            }
+        }
+    </script>
+    <style>
+        button:hover,
+        button:active {
+            outline: 0;
+        }
+
+        /* 3D Button */
+
+        button.depth {
+            background: #444;
+            border: none;
+            border-radius: 80px;
+            box-shadow: inset 0 0 2px 2px hsla(0, 0%, 0%, .2),
+            inset 0 0 2px 4px hsla(0, 0%, 0%, .2),
+            inset 0 0 2px 6px hsla(0, 0%, 0%, .2),
+            inset 0 0 1px 8px hsla(0, 0%, 0%, .5),
+            inset 0 -4px 2px 4px hsla(0, 0%, 0%, .5),
+            inset 0 1px 1px 8px hsla(0, 0%, 100%, .25),
+            inset 0 -30px 30px hsla(0, 0%, 0%, .2),
+            0 -4px 8px 4px hsla(0, 0%, 0%, .5),
+            0 10px 10px hsla(0, 0%, 0%, .25),
+            0 0 2px 2px hsla(0, 0%, 0%, .2),
+            0 0 2px 4px hsla(0, 0%, 0%, .2),
+            0 0 2px 6px hsla(0, 0%, 0%, .2),
+            0 0 2px 8px hsla(0, 0%, 0%, .5),
+            0 1px 2px 8px hsla(0, 0%, 100%, .25),
+            0 -1px 2px 8px hsla(0, 0%, 0%, .5);
+            color: #303030;
+            cursor: pointer;
+            font: bold 40px/85px sans-serif;
+            height: 80px;
+            padding: 0;
+            text-shadow: 0 1px 1px hsla(0, 0%, 100%, .25),
+            0 -1px 1px hsla(0, 0%, 0%, .75);
+            width: 80px;
+            margin: 30px auto;
+        }
+
+        button.depth:hover,
+        button.depth:focus {
+            color: #0ab;
+            text-shadow: 0 0 20px hsla(240, 75%, 75%, .5),
+            0 1px 1px hsla(0, 0%, 100%, .25),
+            0 -1px 1px hsla(0, 0%, 0%, .75);
+        }
+
+        button.depth:active {
+            box-shadow: inset 0 0 2px 2px hsla(0, 0%, 0%, .2),
+            inset 0 0 2px 4px hsla(0, 0%, 0%, .2),
+            inset 0 0 2px 6px hsla(0, 0%, 0%, .2),
+            inset 0 0 1px 7px hsla(0, 0%, 0%, .5),
+            inset 0 5px 15px 7px hsla(0, 0%, 0%, .15),
+            inset 0 -4px 2px 3px hsla(0, 0%, 0%, .5),
+            inset 0 1px 1px 7px hsla(0, 0%, 100%, .25),
+            inset 0 -30px 30px hsla(0, 0%, 0%, .1),
+            inset 0 30px 30px hsla(0, 0%, 0%, .2),
+            0 -4px 8px 4px hsla(0, 0%, 0%, .5),
+            0 5px 10px hsla(0, 0%, 0%, .25),
+            0 0 2px 2px hsla(0, 0%, 0%, .2),
+            0 0 2px 4px hsla(0, 0%, 0%, .2),
+            0 0 2px 6px hsla(0, 0%, 0%, .2),
+            0 0 2px 8px hsla(0, 0%, 0%, .5),
+            0 1px 2px 8px hsla(0, 0%, 100%, .25),
+            0 -1px 2px 8px hsla(0, 0%, 0%, .5);
+            line-height: 86px;
+        }
+    </style>
 </head>
 <body>
-<h1>获取 GitHub 授权成功！</h1>
+<div style="margin-top: 50px; text-align: center">
+    <h1>获取 GitHub 授权成功！</h1>
+    <h3>请关闭当前页面返回 EasyCI</h3>
+    <button class="depth" onclick="CloseWebPage()">X</button>
+</div>
 </body>
 </html>
