@@ -134,6 +134,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         // 开始必备两步 (git clone & init env)
+        List<BuildLog> buildLogs = new ArrayList<>();
         List<String> scriptParameters = new ArrayList<>();
         scriptParameters.add(flowId);
         scriptParameters.add(githubRepo.getName());
@@ -143,11 +144,54 @@ public class TaskServiceImpl implements TaskService {
         String log;
         log = executeScript("git_clone", scriptParameters.toArray(new String[scriptParameters.size()]));
         System.out.println(log);
+        // 更新 Build_Detail 数据表
+        BuildLog buildLog = new BuildLog();
+        if (log.charAt(log.length() - 1) == '0') {
+            // 当前插件运行成功
+            buildLog.setStepName("Git Clone");
+            buildLog.setComplete(true);
+            buildLog.setLogContent(log);
+            buildLog.setSuccess(true);
+            buildLogs.add(buildLog);
+            buildDetail.setBuildLogs(buildLogs.toArray(new BuildLog[buildLogs.size()]));
+            buildDetailRepository.save(buildDetail);
+        } else {
+            // 当前插件运行失败
+            buildLog.setStepName("Git Clone");
+            buildLog.setComplete(true);
+            buildLog.setLogContent(log);
+            buildLog.setSuccess(false);
+            buildLogs.add(buildLog);
+            buildDetail.setBuildLogs(buildLogs.toArray(new BuildLog[buildLogs.size()]));
+            buildDetailRepository.save(buildDetail);
+            isSuccess = false;
+        }
         log = executeScript("init_env", scriptParameters.toArray(new String[scriptParameters.size()]));
         System.out.println(log);
+        // 更新 Build_Detail 数据表
+        buildLog = new BuildLog();
+        if (log.charAt(log.length() - 1) == '0') {
+            // 当前插件运行成功
+            buildLog.setStepName("初始化环境");
+            buildLog.setComplete(true);
+            buildLog.setLogContent(log);
+            buildLog.setSuccess(true);
+            buildLogs.add(buildLog);
+            buildDetail.setBuildLogs(buildLogs.toArray(new BuildLog[buildLogs.size()]));
+            buildDetailRepository.save(buildDetail);
+        } else {
+            // 当前插件运行失败
+            buildLog.setStepName("初始化环境");
+            buildLog.setComplete(true);
+            buildLog.setLogContent(log);
+            buildLog.setSuccess(false);
+            buildLogs.add(buildLog);
+            buildDetail.setBuildLogs(buildLogs.toArray(new BuildLog[buildLogs.size()]));
+            buildDetailRepository.save(buildDetail);
+            isSuccess = false;
+        }
 
         // 依次跑其余自定义脚本插件
-        List<BuildLog> buildLogs = new ArrayList<>();
         for (Plugin plugin : pluginList) {
             scriptParameters = new ArrayList<>();
             scriptParameters.add(flowId);
@@ -166,7 +210,7 @@ public class TaskServiceImpl implements TaskService {
             log = executeScript(plugin.getScriptName(), scriptParameters.toArray(new String[scriptParameters.size()]));
             System.out.println(log);
             // 更新 Build_Detail 数据表
-            BuildLog buildLog = new BuildLog();
+            buildLog = new BuildLog();
             if (log.charAt(log.length() - 1) == '0') {
                 // 当前插件运行成功
                 buildLog.setStepName(plugin.getFullName());
