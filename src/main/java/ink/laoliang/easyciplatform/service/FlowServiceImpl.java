@@ -5,10 +5,7 @@ import ink.laoliang.easyciplatform.domain.request.DeleteFlowRequest;
 import ink.laoliang.easyciplatform.domain.response.CommonOkResponse;
 import ink.laoliang.easyciplatform.domain.response.PluginsResponse;
 import ink.laoliang.easyciplatform.exception.GithubHookException;
-import ink.laoliang.easyciplatform.repository.FlowRepository;
-import ink.laoliang.easyciplatform.repository.GithubRepoRepository;
-import ink.laoliang.easyciplatform.repository.PluginRepository;
-import ink.laoliang.easyciplatform.repository.UserRepository;
+import ink.laoliang.easyciplatform.repository.*;
 import ink.laoliang.easyciplatform.util.CustomConfigration;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
@@ -17,6 +14,7 @@ import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.service.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,6 +47,9 @@ public class FlowServiceImpl implements FlowService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BuildDetailRepository buildDetailRepository;
 
     @Override
     public PluginsResponse getPlugins() {
@@ -104,20 +105,26 @@ public class FlowServiceImpl implements FlowService {
     }
 
     @Override
+    @Transactional
     public CommonOkResponse deleteFlow(DeleteFlowRequest deleteFlowRequest, String accessToken) {
-
         GitHubClient gitHubClient = new GitHubClient().setOAuth2Token(accessToken);
         RepositoryService repositoryService = new RepositoryService(gitHubClient);
         githubRepo = githubRepoRepository.findOne(deleteFlowRequest.getRepoId());
+
         try {
             // 尝试删除远程仓库 WebHook
             repositoryService.deleteHook(repositoryService.getRepository(githubRepo.getLogin(), githubRepo.getName()), deleteFlowRequest.getHookId());
-            // 删库
+            // 删库（该 Flow 的所有构建详情）
+            buildDetailRepository.deleteAllByFlowId(deleteFlowRequest.getFlowId());
+            // 删库（Flow）
             flowRepository.delete(deleteFlowRequest.getFlowId());
         } catch (IOException e) {
             // 遇到异常说明 GitHub 上的 WebHook 已经被用户自行删除，
             // 这里因为 WebHook 不存在而响应异常，
             // 所以继续删库即可！O(∩_∩)O～
+            Integer num = buildDetailRepository.deleteAllByFlowId(deleteFlowRequest.getFlowId());
+            System.out.println(num);
+            System.out.println("=======================");
             flowRepository.delete(deleteFlowRequest.getFlowId());
         }
 
