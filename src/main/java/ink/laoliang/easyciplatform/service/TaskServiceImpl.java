@@ -137,6 +137,7 @@ public class TaskServiceImpl implements TaskService {
         List<BuildLog> buildLogs = new ArrayList<>();
         List<String> scriptParameters = new ArrayList<>();
         scriptParameters.add(flowId);
+        scriptParameters.add(buildDetail.getId());
         scriptParameters.add(githubRepo.getName());
         scriptParameters.add(flow.getPlatform());
         scriptParameters.add(githubRepo.getCloneUrl());
@@ -195,6 +196,7 @@ public class TaskServiceImpl implements TaskService {
         for (Plugin plugin : pluginList) {
             scriptParameters = new ArrayList<>();
             scriptParameters.add(flowId);
+            scriptParameters.add(buildDetail.getId());
             scriptParameters.add(githubRepo.getName());
             scriptParameters.add(flow.getPlatform());
             for (PluginEnv pluginEnv : plugin.getNeedEnv()) {
@@ -239,7 +241,7 @@ public class TaskServiceImpl implements TaskService {
         }
 
         // 最后执行清理脚本
-        executeScript("clean", new String[]{flowId});
+        executeScript("clean", new String[]{flowId, buildDetail.getId()});
 
         // 更新构建状态
         buildDetail.setBuilding(false);

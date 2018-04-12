@@ -1,6 +1,5 @@
 package ink.laoliang.easyciplatform.controller;
 
-import ink.laoliang.easyciplatform.domain.BuildDetail;
 import ink.laoliang.easyciplatform.domain.request.GithubHookRequest;
 import ink.laoliang.easyciplatform.domain.response.BuildDetailResponse;
 import ink.laoliang.easyciplatform.domain.response.CommonOkResponse;
@@ -22,7 +21,7 @@ public class TaskController {
     }
 
     @GetMapping(value = "/up_to_date/{flowId}")
-    public BuildDetailResponse upToDate(@PathVariable String flowId){
+    public BuildDetailResponse upToDate(@PathVariable String flowId) {
         return taskService.upToDate(flowId);
     }
 }
