@@ -1,14 +1,16 @@
 package ink.laoliang.easyciplatform.util;
 
 import ink.laoliang.easyciplatform.domain.User;
-import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.exception.IllegalUserTokenException;
+import ink.laoliang.easyciplatform.repository.UserRepository;
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 
+@Component
 public class UserTokenByJwt {
 
     // Jwt 的 Token 有效时长（毫秒数）
@@ -18,7 +20,6 @@ public class UserTokenByJwt {
     private final static SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
     // 为 Token 签名的 Key
-//    private final static Key SIGNING_KEY = MacProvider.generateKey(); // 此方式重启服务，签名就会改变
     private final static Key SIGNING_KEY = new SecretKeySpec("MyKey".getBytes(), SIGNATURE_ALGORITHM.getJcaName());
 
     /**
