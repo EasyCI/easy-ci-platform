@@ -189,8 +189,10 @@ public class TaskServiceImpl implements TaskService {
             for (PluginEnv pluginEnv : plugin.getNeedEnv()) {
                 scriptParameters.add(pluginEnv.getEnvValue());
             }
-            // 如果这是最后一步——“邮件通知”，那么将会检测当前是否有产物输出，如果有，将会作为邮件内容添加到参数列表末尾用于构建邮件通知
+            // 如果这是最后一步——“邮件通知”，那么将会添加前面步骤中是否有错误的数据参数，
+            // 同时会检测当前是否有产物输出，如果有，将会作为邮件内容添加到参数列表末尾用于构建邮件通知
             if (plugin.getScriptName().equals("send_email")) {
+                scriptParameters.add(isSuccess + "");
                 String productPreviewUrl = buildDetail.getProductPreviewUrl();
                 if (productPreviewUrl != null) {
                     scriptParameters.add(productPreviewUrl);
