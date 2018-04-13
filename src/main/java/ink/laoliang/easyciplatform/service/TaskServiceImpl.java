@@ -55,11 +55,6 @@ public class TaskServiceImpl implements TaskService {
             // GitHub WebHook 触发的
             triggerBranch = githubHookRequest.getRef().split("/")[2];
             isManual = false;
-            System.out.println("=====================================");
-            System.out.println("开始执行 Flow：" + flowId);
-            System.out.println("触发执行的分支是：" + triggerBranch);
-            System.out.println("是否为手动触发：" + isManual);
-            System.out.println("=====================================");
             // 创建一个线程执行构建任务
             new Thread(() -> execute(flowId, triggerBranch, isManual)).start();
             return new CommonOkResponse();
@@ -69,11 +64,6 @@ public class TaskServiceImpl implements TaskService {
             // 手动触发的
             triggerBranch = githubHookRequest.getTriggerBranch();
             isManual = true;
-            System.out.println("=====================================");
-            System.out.println("开始执行 Flow：" + flowId);
-            System.out.println("触发执行的分支是：" + triggerBranch);
-            System.out.println("是否为手动触发：" + isManual);
-            System.out.println("=====================================");
             // 创建一个线程执行构建任务
             new Thread(() -> execute(flowId, triggerBranch, isManual)).start();
             return new CommonOkResponse();
@@ -142,9 +132,7 @@ public class TaskServiceImpl implements TaskService {
         scriptParameters.add(flow.getPlatform());
         scriptParameters.add(githubRepo.getCloneUrl());
         scriptParameters.add(triggerBranch);
-        String log;
-        log = executeScript("git_clone", scriptParameters.toArray(new String[scriptParameters.size()]));
-        System.out.println(log);
+        String log = executeScript("git_clone", scriptParameters.toArray(new String[scriptParameters.size()]));
         // 更新 Build_Detail 数据表
         BuildLog buildLog = new BuildLog();
         if (log.charAt(log.length() - 1) == '0') {
@@ -168,7 +156,6 @@ public class TaskServiceImpl implements TaskService {
             isSuccess = false;
         }
         log = executeScript("init_env", scriptParameters.toArray(new String[scriptParameters.size()]));
-        System.out.println(log);
         // 更新 Build_Detail 数据表
         buildLog = new BuildLog();
         if (log.charAt(log.length() - 1) == '0') {
@@ -210,7 +197,6 @@ public class TaskServiceImpl implements TaskService {
                 }
             }
             log = executeScript(plugin.getScriptName(), scriptParameters.toArray(new String[scriptParameters.size()]));
-            System.out.println(log);
             // 更新 Build_Detail 数据表
             buildLog = new BuildLog();
             if (log.charAt(log.length() - 1) == '0') {
@@ -263,6 +249,13 @@ public class TaskServiceImpl implements TaskService {
         return MD5EncodeUtil.encode(flowId + System.currentTimeMillis());
     }
 
+    /**
+     * 执行具体的插件脚本
+     *
+     * @param scriptName
+     * @param scriptParameters
+     * @return
+     */
     private String executeScript(String scriptName, String[] scriptParameters) {
         // 拼接脚本文件名称
         String pythonScript = customConfigration.getPluginScriptPath() + scriptName + ".py";
