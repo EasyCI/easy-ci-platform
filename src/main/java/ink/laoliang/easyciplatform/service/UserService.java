@@ -1,14 +1,12 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.request.LoginRequest;
-import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.domain.User;
+import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 
 public interface UserService {
-
     User register(User user);
 
-    LoginResponse login(LoginRequest loginRequest);
+    LoginResponse login(String email, String password);
 
-    User logout(String userToken);
+    User changePassword(String userToken, String oldPassword, String newPassword);
 }

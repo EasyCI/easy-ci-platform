@@ -1,10 +1,9 @@
 package ink.laoliang.easyciplatform.service;
 
-import ink.laoliang.easyciplatform.domain.request.LoginRequest;
-import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.domain.User;
-import ink.laoliang.easyciplatform.domain.UserRepository;
+import ink.laoliang.easyciplatform.domain.response.LoginResponse;
 import ink.laoliang.easyciplatform.exception.IllegalParameterException;
+import ink.laoliang.easyciplatform.repository.UserRepository;
 import ink.laoliang.easyciplatform.util.MD5EncodeUtil;
 import ink.laoliang.easyciplatform.util.UserTokenByJwt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private LoginResponse loginResponse;
 
+    @Autowired
+    private User user;
+
     @Override
     public User register(User user) {
         // 检查用户的注册信息格式
@@ -34,13 +36,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findOne(loginRequest.getEmail());
+    public LoginResponse login(String email, String password) {
+        user = userRepository.findOne(email);
 
         if (user == null) {
             throw new IllegalParameterException("【邮箱】账户不存在");
         }
-        if (!user.getPassword().equals(MD5EncodeUtil.encode(loginRequest.getPassword()))) {
+        if (!user.getPassword().equals(MD5EncodeUtil.encode(password))) {
             throw new IllegalParameterException("【密码】错误");
         }
 
@@ -50,8 +52,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User logout(String userToken) {
-        return UserTokenByJwt.parserToken(userToken, userRepository);
+    public User changePassword(String userToken, String oldPassword, String newPassword) {
+        user = UserTokenByJwt.parserToken(userToken, userRepository);
+        if (!user.getPassword().equals(MD5EncodeUtil.encode(oldPassword))) {
+            throw new IllegalParameterException("【原密码】错误");
+        }
+
+        user.setPassword(MD5EncodeUtil.encode(newPassword));
+        return userRepository.save(user);
     }
 
     /**
@@ -61,13 +69,13 @@ public class UserServiceImpl implements UserService {
      */
     private void checkUserInfoIsLegal(User user) {
         if (!checkEmailFormatIsPass(user.getEmail())) {
-            throw new IllegalParameterException("【邮箱】格式非法");
+            throw new IllegalParameterException("【邮箱】格式非法，邮箱格式形如：example@domain");
         }
         if (!checkUsernameFormatIsPass(user.getUsername())) {
-            throw new IllegalParameterException("【用户名】格式非法");
+            throw new IllegalParameterException("【用户名】格式非法，请输入 5～20 位常规 ASCII 字符");
         }
         if (!checkPasswordFormatIsPass(user.getPassword())) {
-            throw new IllegalParameterException("【密码】格式非法");
+            throw new IllegalParameterException("【密码】格式非法，请输入 5～20 位常规 ASCII 字符");
         }
     }
 

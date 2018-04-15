@@ -1,4 +1,4 @@
-package ink.laoliang.easyciplatform.domain;
+package ink.laoliang.easyciplatform.repository;
 
 import ink.laoliang.easyciplatform.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;

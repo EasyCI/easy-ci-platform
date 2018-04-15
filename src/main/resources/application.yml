@@ -1,16 +1,29 @@
+# System Configuration
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/easy_ci_platform?useSSL=false
+    url: jdbc:mysql://127.0.0.1:3306/easy_ci_platform?useSSL=false&useUnicode=true&characterEncoding=utf-8
     username: root
     password: root
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  mvc:
+    view:
+      prefix: classpath:/templates/
+      suffix: .html
 server:
   port: 8080
   context-path: /
+
+# Custom Configuration
+custom:
+  serverHost: http://6629e695.ngrok.io
+  githubClientId: 384bd7c1472f8f66807d
+  githubClientSecret: 8dbb5c28d0bdcac525e0ad13c508442fbb91a3e9
+  githubAuthorizationScopes: user:email,repo
+  pluginScriptPath: /home/lpy/IdeaProjects/easy-ci-plugin/script/

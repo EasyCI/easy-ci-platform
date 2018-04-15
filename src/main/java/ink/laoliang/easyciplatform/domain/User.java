@@ -1,6 +1,5 @@
 package ink.laoliang.easyciplatform.domain;
 
-import ink.laoliang.easyciplatform.domain.BaseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
